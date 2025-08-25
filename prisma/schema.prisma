@@ -1,0 +1,16 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+// Example of generated code
+// Property names MUST be camelCase!
+// To automatically convert PascalCase to camelCase, use the following npm script: npm run prisma:format 
+model User {
+  id    String  @id(map: "PK_User") @map("Id") @db.UniqueIdentifier
+  name  String  @map("Name") @db.NVarChar(128)
+}

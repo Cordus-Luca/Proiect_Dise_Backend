@@ -1,0 +1,31 @@
+  scalar DateTime
+  scalar Byte
+  scalar Char
+  scalar Upload
+  type Query
+  type Mutation
+  
+  schema {
+    query: Query
+    mutation: Mutation
+  }
+
+  input PagerInput {
+    afterId: ID
+    sortBy: String
+    direction: Int
+    pageSize: Int
+  }
+
+  type Page {
+    afterId: ID
+    sortBy: String
+    direction: Int
+    pageSize: Int
+  }
+
+  type Pagination {
+    totalCount: Int
+    prevPage: Page
+    nextPage: Page
+  }
