@@ -1,0 +1,38 @@
+
+type Category {
+  id: Int!
+  name: String!
+  code: String
+}
+
+type Type {
+  id: Int!
+  name: String!
+  code: String
+}
+
+type Country {
+  id: Int!
+  name: String!
+  code: String    
+}
+
+type County {
+  id: Int!
+  name: String!
+  code: String    
+}
+
+type City {
+  id: Int!
+  name: String!
+  code: String    
+}
+
+extend type Query {
+  categoryList: [Category!]!
+  typeList: [Type!]!
+  countryList: [Country!]!
+  countyList: [County!]!
+  cityList: [City!]!
+}
