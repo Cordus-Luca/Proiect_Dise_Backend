@@ -1,4 +1,4 @@
-
+# Get conference action
 type Category {
   id: Int!
   name: String!
@@ -35,4 +35,17 @@ extend type Query {
   countryList: [Country!]!
   countyList: [County!]!
   cityList: [City!]!
+}
+
+# Save conference action
+input CategoryInput {
+  id: Int!
+  name: String!
+  code: String
+}
+
+input TypeInput {
+  id: Int!
+  name: String!
+  code: String
 }

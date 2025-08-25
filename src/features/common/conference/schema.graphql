@@ -1,3 +1,4 @@
+# Get conference action
 type Status {
   id: Int!
   name: String!
@@ -44,4 +45,42 @@ input ConferenceFilterInput {
 extend type Query {
   conferenceList(filters: ConferenceFilterInput, userEmail:String!): [Conference]
   conference(id: Int!): Conference!
+}
+
+# Save conference action
+input ConferenceInput {
+  id: Int
+  name: String!
+  startDate: DateTime!
+  endDate: DateTime!
+  organizerEmail: String!
+  type: TypeInput!
+  category: CategoryInput!
+  location: LocationInput!
+  speakers: [SpeakerInput!]!
+  deletedSpeakers: [Int!]
+}
+
+input LocationInput {
+  id: Int
+  name: String
+  address: String
+  latitude: Float
+  longitude: Float
+  cityId: Int!
+  countyId: Int!
+  countryId: Int!
+}
+
+input SpeakerInput {
+  id: Int
+  name: String
+  isMainSpeaker: Boolean
+  nationality: String
+  rating: Float
+  phoneNumber: String
+}
+
+extend type Mutation {
+    saveConference(input: ConferenceInput!): Conference!
 }

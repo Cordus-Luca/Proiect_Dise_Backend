@@ -43,4 +43,5 @@ const conferenceQueryResolvers = {
     country: ({ countryId }) => prisma().dictionaryCountry.findUnique({ where: { id: countryId } })
   }
 }
+
 module.exports = conferenceQueryResolvers
