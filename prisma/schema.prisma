@@ -7,10 +7,152 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Example of generated code
-// Property names MUST be camelCase!
-// To automatically convert PascalCase to camelCase, use the following npm script: npm run prisma:format 
-model User {
-  id    String  @id(map: "PK_User") @map("Id") @db.UniqueIdentifier
-  name  String  @map("Name") @db.NVarChar(128)
+model Logs {
+  id            Int      @id(map: "PK___Logs") @default(autoincrement()) @map("Id")
+  message       String?  @map("Message") @db.NVarChar(Max)
+  level         String?  @map("Level") @db.NVarChar(128)
+  timeStamp     DateTime @map("TimeStamp") @db.DateTime
+  exception     String?  @map("Exception") @db.NVarChar(Max)
+  logEvent      String?  @map("LogEvent") @db.NVarChar(Max)
+  correlationId String?  @map("CorrelationId") @db.UniqueIdentifier
+
+  @@map("__Logs")
+}
+
+model Conference {
+  id                       Int                      @id(map: "PK_Conference") @default(autoincrement()) @map("Id")
+  conferenceTypeId         Int                      @map("ConferenceTypeId")
+  locationId               Int                      @map("LocationId")
+  organizerEmail           String                   @map("OrganizerEmail") @db.NVarChar(50)
+  categoryId               Int                      @map("CategoryId")
+  startDate                DateTime                 @map("StartDate") @db.Date
+  endDate                  DateTime                 @map("EndDate") @db.Date
+  name                     String                   @map("Name") @db.NVarChar(255)
+  dictionaryCategory       DictionaryCategory       @relation(fields: [categoryId], references: [id], onUpdate: NoAction, map: "FK_Conference_DictionaryCategory")
+  dictionaryConferenceType DictionaryConferenceType @relation(fields: [conferenceTypeId], references: [id], onUpdate: NoAction, map: "FK_Conference_DictionaryConferenceType")
+  location                 Location                 @relation(fields: [locationId], references: [id], onUpdate: NoAction, map: "FK_Conference_Location")
+  conferenceXAttendee      ConferenceXAttendee[]
+  conferenceXSpeaker       ConferenceXSpeaker[]
+  feedback                 Feedback[]
+}
+
+model ConferenceXAttendee {
+  id               Int              @id(map: "PK_ConferenceXAttendee") @default(autoincrement()) @map("Id")
+  attendeeEmail    String           @map("AttendeeEmail") @db.NVarChar(50)
+  conferenceId     Int              @map("ConferenceId")
+  statusId         Int              @map("StatusId")
+  name             String?          @map("Name") @db.NVarChar(255)
+  phoneNumber      String?          @map("PhoneNumber") @db.NVarChar(50)
+  conference       Conference       @relation(fields: [conferenceId], references: [id], onUpdate: NoAction, map: "FK_ConferenceXAttendee_Conference")
+  dictionaryStatus DictionaryStatus @relation(fields: [statusId], references: [id], onUpdate: NoAction, map: "FK_ConferenceXAttendee_DictionaryStatus")
+}
+
+model ConferenceXSpeaker {
+  id            Int        @id(map: "PK_ConferenceXSpeaker") @default(autoincrement()) @map("Id")
+  conferenceId  Int        @map("ConferenceId")
+  speakerId     Int        @map("SpeakerId")
+  isMainSpeaker Boolean?   @map("IsMainSpeaker")
+  conference    Conference @relation(fields: [conferenceId], references: [id], onUpdate: NoAction, map: "FK_ConferenceXSpeaker_Conference")
+  speaker       Speaker    @relation(fields: [speakerId], references: [id], onUpdate: NoAction, map: "FK_ConferenceXSpeaker_Speaker")
+
+  @@unique([conferenceId, speakerId], map: "IX_ConferenceXSpeaker")
+}
+
+model DictionaryCategory {
+  id         Int          @id(map: "PK_DictionaryCategory") @default(autoincrement()) @map("Id")
+  name       String       @map("Name") @db.NVarChar(255)
+  code       String       @map("Code") @db.NVarChar(50)
+  conference Conference[]
+}
+
+model DictionaryCity {
+  id       Int        @id(map: "PK_DictionaryCity") @default(autoincrement()) @map("Id")
+  name     String     @map("Name") @db.NVarChar(255)
+  code     String     @map("Code") @db.NVarChar(50)
+  location Location[]
+}
+
+model DictionaryConferenceType {
+  id         Int          @id(map: "PK_DictionaryConferenceType") @default(autoincrement()) @map("Id")
+  name       String       @map("Name") @db.NVarChar(255)
+  code       String       @map("Code") @db.NVarChar(50)
+  conference Conference[]
+}
+
+model DictionaryCountry {
+  id       Int        @id(map: "PK_DictionaryCountry") @default(autoincrement()) @map("Id")
+  name     String     @map("Name") @db.NVarChar(255)
+  code     String     @map("Code") @db.NVarChar(50)
+  location Location[]
+}
+
+model DictionaryCounty {
+  id       Int        @id(map: "PK_DictionaryCounty") @default(autoincrement()) @map("Id")
+  name     String     @map("Name") @db.NVarChar(255)
+  code     String     @map("Code") @db.NVarChar(50)
+  location Location[]
+}
+
+model DictionaryStatus {
+  id                  Int                   @id(map: "PK_DictionaryStatus") @default(autoincrement()) @map("Id")
+  name                String                @map("Name") @db.NVarChar(255)
+  code                String                @map("Code") @db.NVarChar(50)
+  conferenceXAttendee ConferenceXAttendee[]
+}
+
+model EmailNotification {
+  id       Int      @id(map: "PK__EmailNot__3214EC072AE8A46B") @default(autoincrement()) @map("Id")
+  to       String   @map("To") @db.NVarChar(150)
+  cc       String?  @map("Cc") @db.NVarChar(150)
+  subject  String   @map("Subject") @db.NVarChar(200)
+  message  String   @map("Message") @db.NVarChar(Max)
+  sentDate DateTime @map("SentDate") @db.DateTime
+}
+
+model Feedback {
+  id            Int        @id(map: "PK__Feedback__3214EC07CAF6FCF0") @default(autoincrement()) @map("Id")
+  attendeeEmail String?    @map("AttendeeEmail") @db.NVarChar(100)
+  conferenceId  Int        @map("ConferenceId")
+  speakerId     Int        @map("SpeakerId")
+  rating        Decimal?   @map("Rating") @db.Decimal(5, 2)
+  message       String?    @map("Message") @db.NVarChar(Max)
+  conference    Conference @relation(fields: [conferenceId], references: [id], onUpdate: NoAction, map: "FK_Feedback_ConferenceId")
+  speaker       Speaker    @relation(fields: [speakerId], references: [id], onUpdate: NoAction, map: "FK_Feedback_SpeakerId")
+}
+
+model Location {
+  id                Int               @id(map: "PK_Location") @default(autoincrement()) @map("Id")
+  name              String?           @map("Name") @db.NVarChar(255)
+  code              String?           @map("Code") @db.NVarChar(50)
+  countryId         Int               @map("CountryId")
+  address           String?           @map("Address") @db.NVarChar(255)
+  countyId          Int               @map("CountyId")
+  cityId            Int               @map("CityId")
+  latitude          Decimal?          @map("Latitude") @db.Decimal(12, 9)
+  longitude         Decimal?          @map("Longitude") @db.Decimal(12, 9)
+  conference        Conference[]
+  dictionaryCity    DictionaryCity    @relation(fields: [cityId], references: [id], onUpdate: NoAction, map: "FK_Location_DictionaryCity")
+  dictionaryCountry DictionaryCountry @relation(fields: [countryId], references: [id], onUpdate: NoAction, map: "FK_Location_DictionaryCountry")
+  dictionaryCounty  DictionaryCounty  @relation(fields: [countyId], references: [id], onUpdate: NoAction, map: "FK_Location_DictionaryCounty")
+}
+
+model SmsNotification {
+  id          Int      @id(map: "PK__SMSNotif__3214EC07E35BD036") @default(autoincrement()) @map("Id")
+  phoneNumber String   @map("PhoneNumber") @db.NVarChar(20)
+  message     String   @map("Message") @db.NVarChar(Max)
+  sentDate    DateTime @map("SentDate") @db.DateTime
+
+  @@map("SMSNotification")
+}
+
+model Speaker {
+  id                 Int                  @id(map: "PK_Speaker") @default(autoincrement()) @map("Id")
+  name               String               @map("Name") @db.NVarChar(255)
+  nationality        String?              @map("Nationality") @db.NVarChar(50)
+  rating             Decimal?             @map("Rating") @db.Decimal(5, 2)
+  image              Bytes?               @map("Image") @db.Image
+  email              String?              @map("Email") @db.NVarChar(100)
+  phoneNumber        String?              @map("PhoneNumber") @db.NVarChar(50)
+  conferenceXSpeaker ConferenceXSpeaker[]
+  feedback           Feedback[]
 }
