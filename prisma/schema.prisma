@@ -31,7 +31,7 @@ model Conference {
   dictionaryCategory       DictionaryCategory       @relation(fields: [categoryId], references: [id], onUpdate: NoAction, map: "FK_Conference_DictionaryCategory")
   dictionaryConferenceType DictionaryConferenceType @relation(fields: [conferenceTypeId], references: [id], onUpdate: NoAction, map: "FK_Conference_DictionaryConferenceType")
   location                 Location                 @relation(fields: [locationId], references: [id], onUpdate: NoAction, map: "FK_Conference_Location")
-  conferenceXAttendee      ConferenceXAttendee[]
+  conferenceXAttendee      ConferenceXAttendee[]    
   conferenceXSpeaker       ConferenceXSpeaker[]
   feedback                 Feedback[]
 }
@@ -43,7 +43,7 @@ model ConferenceXAttendee {
   statusId         Int              @map("StatusId")
   name             String?          @map("Name") @db.NVarChar(255)
   phoneNumber      String?          @map("PhoneNumber") @db.NVarChar(50)
-  conference       Conference       @relation(fields: [conferenceId], references: [id], onUpdate: NoAction, map: "FK_ConferenceXAttendee_Conference")
+  conference       Conference       @relation(fields: [conferenceId], references: [id], onUpdate: NoAction, map: "FK_ConferenceXAttendee_Conference", onDelete: Cascade) 
   dictionaryStatus DictionaryStatus @relation(fields: [statusId], references: [id], onUpdate: NoAction, map: "FK_ConferenceXAttendee_DictionaryStatus")
 }
 
@@ -52,7 +52,7 @@ model ConferenceXSpeaker {
   conferenceId  Int        @map("ConferenceId")
   speakerId     Int        @map("SpeakerId")
   isMainSpeaker Boolean?   @map("IsMainSpeaker")
-  conference    Conference @relation(fields: [conferenceId], references: [id], onUpdate: NoAction, map: "FK_ConferenceXSpeaker_Conference")
+  conference    Conference @relation(fields: [conferenceId], references: [id], onUpdate: NoAction, map: "FK_ConferenceXSpeaker_Conference", onDelete: Cascade)
   speaker       Speaker    @relation(fields: [speakerId], references: [id], onUpdate: NoAction, map: "FK_ConferenceXSpeaker_Speaker")
 
   @@unique([conferenceId, speakerId], map: "IX_ConferenceXSpeaker")
@@ -116,7 +116,7 @@ model Feedback {
   speakerId     Int        @map("SpeakerId")
   rating        Decimal?   @map("Rating") @db.Decimal(5, 2)
   message       String?    @map("Message") @db.NVarChar(Max)
-  conference    Conference @relation(fields: [conferenceId], references: [id], onUpdate: NoAction, map: "FK_Feedback_ConferenceId")
+  conference    Conference @relation(fields: [conferenceId], references: [id], onUpdate: NoAction, map: "FK_Feedback_ConferenceId", onDelete: Cascade)
   speaker       Speaker    @relation(fields: [speakerId], references: [id], onUpdate: NoAction, map: "FK_Feedback_SpeakerId")
 }
 

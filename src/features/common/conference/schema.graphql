@@ -83,4 +83,5 @@ input SpeakerInput {
 
 extend type Mutation {
     saveConference(input: ConferenceInput!): Conference!
+    deleteConference(id: Int!): String
 }

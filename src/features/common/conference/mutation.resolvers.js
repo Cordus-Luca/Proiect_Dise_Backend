@@ -62,6 +62,10 @@ const conferenceMutationResolvers = {
       })
 
       return result
+    },
+    deleteConference: async (_parent, { id }, _ctx, _info) => {
+        await prisma().conference.delete({ where: { id } })
+        return 'Conference deleted successfully'
     }
   }
 }
