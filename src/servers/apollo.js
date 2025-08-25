@@ -5,14 +5,14 @@ const { ApolloServer } = require('@apollo/server'),
   bodyParser = require('koa-bodyparser'),
   {
     errorHandlingMiddleware,
-    correlationMiddleware,
+    // correlationMiddleware,
     loggingMiddleware,
-    jwtTokenValidation,
-    jwtTokenUserIdentification
+    // jwtTokenValidation,
+    // jwtTokenUserIdentification
   } = require('../middleware'),
   cors = require('@koa/cors'),
-  { publicRoute } = require('../utils/functions'),
-  ignore = require('koa-ignore'),
+  // { publicRoute } = require('../utils/functions'),
+  // ignore = require('koa-ignore'),
   { koaMiddleware } = require('@as-integrations/koa'),
   { schema, getDataSources, logger } = require('../startup'),
   { METRICS_ENABLED } = process.env,
@@ -43,9 +43,9 @@ const startApolloServer = async httpServer => {
     .use(loggingMiddleware)
     .use(errorHandlingMiddleware())
     .use(bodyParser())
-    .use(correlationMiddleware())
+    // .use(correlationMiddleware())
     .use(cors({ credentials: true }))
-    .use(ignore(jwtTokenValidation, jwtTokenUserIdentification).if(ctx => publicRoute(ctx)))
+    // .use(ignore(jwtTokenValidation, jwtTokenUserIdentification).if(ctx => publicRoute(ctx)))
   app.use(
     koaMiddleware(apolloServer, {
       context: async ({ ctx }) => {
