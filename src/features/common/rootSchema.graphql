@@ -29,3 +29,15 @@
     prevPage: Page
     nextPage: Page
   }
+
+  type User {
+    id: ID!
+    email: String!
+    name: String
+    preferredTags: [Tag!]!
+  }
+
+  type Tag {
+    id: Int!
+    name: String!
+  }

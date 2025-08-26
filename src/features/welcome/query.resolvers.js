@@ -1,8 +1,12 @@
+const { prisma } = require('../../prisma')
+
 const welcomeResolvers = {
   Query: {
-    helloWorld: async (_parent, _arguments, _context, _info) => {
-      return 'Hello World!👋'
-    }
-  }
+    userByEmail: (_parent, { email }, _ctx, _info) => {
+      if (!email) return null
+      return prisma().appUser.findUnique({ where: { email } })
+    },
+  },
 }
+
 module.exports = welcomeResolvers

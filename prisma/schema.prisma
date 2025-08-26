@@ -31,8 +31,9 @@ model Conference {
   dictionaryCategory       DictionaryCategory       @relation(fields: [categoryId], references: [id], onUpdate: NoAction, map: "FK_Conference_DictionaryCategory")
   dictionaryConferenceType DictionaryConferenceType @relation(fields: [conferenceTypeId], references: [id], onUpdate: NoAction, map: "FK_Conference_DictionaryConferenceType")
   location                 Location                 @relation(fields: [locationId], references: [id], onUpdate: NoAction, map: "FK_Conference_Location")
-  conferenceXAttendee      ConferenceXAttendee[]    
+  conferenceXAttendee      ConferenceXAttendee[]
   conferenceXSpeaker       ConferenceXSpeaker[]
+  conferenceXTag           ConferenceXTag[]
   feedback                 Feedback[]
 }
 
@@ -43,7 +44,7 @@ model ConferenceXAttendee {
   statusId         Int              @map("StatusId")
   name             String?          @map("Name") @db.NVarChar(255)
   phoneNumber      String?          @map("PhoneNumber") @db.NVarChar(50)
-  conference       Conference       @relation(fields: [conferenceId], references: [id], onUpdate: NoAction, map: "FK_ConferenceXAttendee_Conference", onDelete: Cascade) 
+  conference       Conference       @relation(fields: [conferenceId], references: [id], onUpdate: NoAction, map: "FK_ConferenceXAttendee_Conference")
   dictionaryStatus DictionaryStatus @relation(fields: [statusId], references: [id], onUpdate: NoAction, map: "FK_ConferenceXAttendee_DictionaryStatus")
 }
 
@@ -52,7 +53,7 @@ model ConferenceXSpeaker {
   conferenceId  Int        @map("ConferenceId")
   speakerId     Int        @map("SpeakerId")
   isMainSpeaker Boolean?   @map("IsMainSpeaker")
-  conference    Conference @relation(fields: [conferenceId], references: [id], onUpdate: NoAction, map: "FK_ConferenceXSpeaker_Conference", onDelete: Cascade)
+  conference    Conference @relation(fields: [conferenceId], references: [id], onUpdate: NoAction, map: "FK_ConferenceXSpeaker_Conference")
   speaker       Speaker    @relation(fields: [speakerId], references: [id], onUpdate: NoAction, map: "FK_ConferenceXSpeaker_Speaker")
 
   @@unique([conferenceId, speakerId], map: "IX_ConferenceXSpeaker")
@@ -116,7 +117,7 @@ model Feedback {
   speakerId     Int        @map("SpeakerId")
   rating        Decimal?   @map("Rating") @db.Decimal(5, 2)
   message       String?    @map("Message") @db.NVarChar(Max)
-  conference    Conference @relation(fields: [conferenceId], references: [id], onUpdate: NoAction, map: "FK_Feedback_ConferenceId", onDelete: Cascade)
+  conference    Conference @relation(fields: [conferenceId], references: [id], onUpdate: NoAction, map: "FK_Feedback_ConferenceId")
   speaker       Speaker    @relation(fields: [speakerId], references: [id], onUpdate: NoAction, map: "FK_Feedback_SpeakerId")
 }
 
@@ -150,9 +151,49 @@ model Speaker {
   name               String               @map("Name") @db.NVarChar(255)
   nationality        String?              @map("Nationality") @db.NVarChar(50)
   rating             Decimal?             @map("Rating") @db.Decimal(5, 2)
-  image              Bytes?               @map("Image") @db.Image
   email              String?              @map("Email") @db.NVarChar(100)
   phoneNumber        String?              @map("PhoneNumber") @db.NVarChar(50)
   conferenceXSpeaker ConferenceXSpeaker[]
   feedback           Feedback[]
+}
+
+model AppUser {
+  id        Int        @id(map: "PK_AppUser") @default(autoincrement()) @map("Id")
+  email     String     @unique(map: "UX_AppUser_Email") @map("Email") @db.NVarChar(255)
+  name      String?    @map("Name") @db.NVarChar(255)
+  password  String?    @map("Password") @db.NVarChar(255)
+  createdAt DateTime   @default(dbgenerated("sysutcdatetime()"), map: "DF_AppUser_CreatedAt") @map("CreatedAt")
+  userXTag  UserXTag[]
+}
+
+model ConferenceXTag {
+  id           Int        @id(map: "PK_ConferenceXTag") @default(autoincrement()) @map("Id")
+  conferenceId Int        @map("ConferenceId")
+  tagId        Int        @map("TagId")
+  conference   Conference @relation(fields: [conferenceId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_CXT_Conference")
+  tag          Tag        @relation(fields: [tagId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_CXT_Tag")
+
+  @@unique([conferenceId, tagId], map: "UX_ConferenceXTag_UQ")
+  @@index([tagId], map: "IX_ConferenceXTag_TagId")
+}
+
+model Tag {
+  id             Int              @id(map: "PK_Tag") @default(autoincrement()) @map("Id")
+  name           String           @map("Name") @db.NVarChar(100)
+  normalizedName String?          @unique(map: "UX_Tag_NormalizedName") @map("NormalizedName") @db.NVarChar(100)
+  synonyms       String?          @map("Synonyms") @db.NVarChar(Max)
+  conferenceXTag ConferenceXTag[]
+  userXTag       UserXTag[]
+}
+
+model UserXTag {
+  id      Int     @id(map: "PK_UserXTag") @default(autoincrement()) @map("Id")
+  userId  Int     @map("UserId")
+  tagId   Int     @map("TagId")
+  weight  Decimal @default(1.00, map: "DF_UserXTag_Weight") @map("Weight") @db.Decimal(5, 2)
+  tag     Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_UXT_Tag")
+  appUser AppUser @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_UXT_User")
+
+  @@unique([userId, tagId], map: "UX_UserXTag_UQ")
+  @@index([tagId], map: "IX_UserXTag_TagId")
 }

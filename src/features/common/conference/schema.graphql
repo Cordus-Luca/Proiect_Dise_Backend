@@ -42,11 +42,6 @@ input ConferenceFilterInput {
   endDate: DateTime
 }
 
-extend type Query {
-  conferenceList(filters: ConferenceFilterInput, userEmail:String!): [Conference]
-  conference(id: Int!): Conference!
-}
-
 # Save conference action
 input ConferenceInput {
   id: Int
@@ -77,8 +72,14 @@ input SpeakerInput {
   name: String
   isMainSpeaker: Boolean
   nationality: String
+  image: Byte
   rating: Float
   phoneNumber: String
+}
+
+extend type Query {
+  conferenceList(filters: ConferenceFilterInput, userEmail:String!): [Conference]
+  conference(id: Int!): Conference!
 }
 
 extend type Mutation {
