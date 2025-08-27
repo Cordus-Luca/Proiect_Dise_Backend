@@ -3,7 +3,7 @@ const { prisma } = require('../../prisma')
 const welcomeMutationResolvers = {
   Mutation: {
     getOrCreateUser: async (_parent, { input }, _ctx, _info) => {
-      // input: { email: String!, name?: String, password?: String }
+      const { email, name, password } = input
       return prisma().$transaction(async (tx) => {
         // upsert by unique email
         return tx.appUser.upsert({

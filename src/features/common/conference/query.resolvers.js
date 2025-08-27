@@ -13,7 +13,9 @@ const conferenceQueryResolvers = {
     },
     conference: async (_parent, { id }, _ctx, _info) => {
         return prisma().conference.findUnique({ where: { id } })
-    }
+    },
+    tagList: () =>
+      prisma().tag.findMany({ orderBy: { name: 'asc' } })
   },
   Conference: {
     type: ({ conferenceTypeId }) => prisma().dictionaryConferenceType.findUnique({ where: { id: conferenceTypeId } }),
@@ -35,7 +37,14 @@ const conferenceQueryResolvers = {
       })
 
       return result?.dictionaryStatus
-    }
+    },
+    tags: async ({ id }) => {
+      const rows = await prisma().conferenceXTag.findMany({
+        where: { conferenceId: id },
+        include: { tag: true }
+      })
+      return rows.map(r => r.tag).filter(Boolean)
+    },
   },
   Location: {
     city: ({ cityId }) => prisma().dictionaryCity.findUnique({ where: { id: cityId } }),

@@ -16,6 +16,9 @@ const dictionaryResolvers = {
     },
     cityList: async (_parent, _arguments, _ctx, _info) => {
       return prisma().dictionaryCity.findMany()
+    },
+    tagList: async (_parent, _arguments, _ctx, _info) => {
+      return prisma().tag.findMany()
     }
   }
 }

@@ -24,6 +24,11 @@ type Speaker {
   isMainSpeaker: Boolean
 }
 
+type Tag {
+  id: Int!
+  name: String!
+}
+
 type Conference {
   id: Int!
   name: String!
@@ -35,6 +40,7 @@ type Conference {
   speakers: [Speaker!]!
   location: Location!
   status(userEmail: String!): Status
+  tags: [Tag!]!
 }
 
 input ConferenceFilterInput {
@@ -54,6 +60,8 @@ input ConferenceInput {
   location: LocationInput!
   speakers: [SpeakerInput!]!
   deletedSpeakers: [Int!]
+  tags: [TagInput!]!
+  deletedTags: [Int!]
 }
 
 input LocationInput {
@@ -77,9 +85,15 @@ input SpeakerInput {
   phoneNumber: String
 }
 
+input TagInput {
+  id: Int
+  name: String!
+}
+
 extend type Query {
   conferenceList(filters: ConferenceFilterInput, userEmail:String!): [Conference]
   conference(id: Int!): Conference!
+  tagList: [Tag!]!
 }
 
 extend type Mutation {

@@ -35,6 +35,7 @@ extend type Query {
   countryList: [Country!]!
   countyList: [County!]!
   cityList: [City!]!
+  tagList: [Tag!]!
 }
 
 # Save conference action

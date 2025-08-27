@@ -1,4 +1,4 @@
-type User {
+type AppUser {
   id: ID!
   email: String!
   name: String
@@ -12,9 +12,9 @@ input UserInput {
 }
 
 extend type Query {
-  userByEmail(email: String!): User
+  userByEmail(email: String!): AppUser
 }
 
 extend type Mutation{
-  getOrCreateUser(input: UserInput!): User
+  getOrCreateUser(input: UserInput!): AppUser
 }

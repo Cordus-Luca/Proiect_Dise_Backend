@@ -30,7 +30,7 @@
     nextPage: Page
   }
 
-  type User {
+  type AppUser {
     id: ID!
     email: String!
     name: String
