@@ -1,0 +1,38 @@
+type AppUser {
+  id: ID!
+  email: String!
+  name: String
+  weightedTags: [WeightedTag!]!
+}
+
+type WeightedTag {
+  id: Int!
+  name: String
+  tagId: Int!
+  weight: Float
+}
+
+input UserInput {
+  email: String!
+  name: String
+  password: String
+  tags: [WeightedTagInput!]
+  deletedTags: [Int!]
+}
+
+input WeightedTagInput {
+  id: Int!
+  name: String!
+  tagId: Int!
+  weight: Float!
+}
+
+extend type Query {
+  userByEmail(email: String!): AppUser
+  weightedTagList: [WeightedTag!]!
+  tagList: [Tag!]!
+}
+extend type Mutation{
+  getOrCreateUser(input: UserInput!): AppUser
+  saveProfile(input: UserInput!): AppUser
+}

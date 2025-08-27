@@ -34,7 +34,6 @@
     id: ID!
     email: String!
     name: String
-    preferredTags: [Tag!]!
   }
 
   type Tag {

@@ -46,6 +46,8 @@ model ConferenceXAttendee {
   phoneNumber      String?          @map("PhoneNumber") @db.NVarChar(50)
   conference       Conference       @relation(fields: [conferenceId], references: [id], onUpdate: NoAction, map: "FK_ConferenceXAttendee_Conference")
   dictionaryStatus DictionaryStatus @relation(fields: [statusId], references: [id], onUpdate: NoAction, map: "FK_ConferenceXAttendee_DictionaryStatus")
+
+  @@unique([conferenceId, attendeeEmail], map: "UX_CXA_Conference_Attendee")
 }
 
 model ConferenceXSpeaker {
