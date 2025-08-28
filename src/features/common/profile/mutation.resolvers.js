@@ -81,6 +81,25 @@ const profileMutationResolvers = {
       })
 
       return result
+    },
+
+    changeAttendanceStatus: async (_parent, { input }, _ctx, _info) => {
+      const { attendeeEmail, conferenceId, statusId } = input
+
+      await prisma().$transaction(async (tx) => {
+        const updated = await tx.conferenceXAttendee.updateMany({
+          where: { attendeeEmail, conferenceId },
+          data: { statusId }
+        })
+
+        if (updated.count === 0) {
+          await tx.conferenceXAttendee.create({
+            data: { attendeeEmail, conferenceId, statusId }
+          })
+        }
+      })
+
+      return "OK"
     }
   }
 }

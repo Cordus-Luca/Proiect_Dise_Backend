@@ -46,6 +46,8 @@ type Conference {
 input ConferenceFilterInput {
   startDate: DateTime
   endDate: DateTime
+  name: String
+  tagIds: [Int!]
 }
 
 # Save conference action
@@ -90,13 +92,23 @@ input TagInput {
   name: String!
 }
 
+input AttendeeInput {
+  attendeeEmail: String!
+  conferenceId: Int!
+  statusId: Int!
+}
+
 extend type Query {
   conferenceList(filters: ConferenceFilterInput, userEmail:String!): [Conference]
   conference(id: Int!): Conference!
   tagList: [Tag!]!
+  usedTagList: [Tag!]!
+  recommendedConferenceList(userEmail: String!, filters: ConferenceFilterInput, limit: Int = 50): [Conference!]!
+  attendedConferenceList(userEmail: String!): [Conference!]!
 }
 
 extend type Mutation {
     saveConference(input: ConferenceInput!): Conference!
     deleteConference(id: Int!): String
+    changeAttendanceStatus(input: AttendeeInput!): String
 }
